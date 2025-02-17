@@ -1,24 +1,55 @@
 <img src="docs\assets\BLEND BANNER.jpeg" width=100%>
 <h1>L&L code Example</h1>
 
+<h2>Running the code:</h2>
+
+Install dependencies:
+
+1.  In the root folder, ensure environment variables are set.
+2.  Set database values in the `.env` file.
+3.  Package installation: You can use several package managers to install the dependencies, we recomend [UV from Astral](https://docs.astral.sh/uv/), because is swift. To install the dependencies follow the next steps using BASH or SHELL:
+    **NOTE**: windows users must comment out uwsgi from [requirements.in](requirements.in)
+
+Install UV from https://docs.astral.sh/uv/getting-started/installation/
+```shell
+# 1. Create a virtual environment at the root:
+$ uv venv
+
+# 2. Compile the dependencies using python or python3 command:
+$ python -m uv pip compile requirements.in --output-file requirements.txt
+
+# 3. Install packages using python or python3 command:
+$ python -m uv pip sync requirements.txt
+```
+
+<h2>Creating database</h2>
+Just run:
+
+```shell
+$ docker-compose up
+```
+This will create and run the Postgres database with the Adminer UI for DB viewer.
+Navigate to http://localhost:8080 to visit adminer
+
+
 Data Engineering Coding Challenge
 
-You will find several different sections in here. Mind that:  
+You will find several different sections in here. Mind that:
 + You can choose which sections to solve based on your experience and available time
 + if you don’t know how to solve a section, you can proceed with the following one
 + You can use whichever language, libraries, and frameworks that you want.
-+ The usage of cloud services is allowed, you can choose whichever cloud provider that  
++ The usage of cloud services is allowed, you can choose whichever cloud provider that
 you want
 + Try to always apply best practices and develop a scalable solution.
 + We recommend you to solve everything
-+ If you don’t have time to solve any sections, try to think the toolstack you would like to  
++ If you don’t have time to solve any sections, try to think the toolstack you would like to
 use and the resulting architecture, and why.
 + Every complement you might want to add is highly welcome!
 + In case you have a personal github repository to share with the interviewer, please do!
 
 # Section 1: API
 
-In the context of a DB migration with 3 different tables (departments, jobs, employees) , create  
+In the context of a DB migration with 3 different tables (departments, jobs, employees) , create
 a local REST API that must:
 
 Receive historical data from CSV files
@@ -27,8 +58,8 @@ Upload these files to the new DB
 
 Be able to insert batch transactions (1 up to 1000 rows) with one request
 
-You need to publish your code in GitHub. It will be taken into account if frequent updates are  
-made to the repository that allow analyzing the development process. Ideally, create a  
+You need to publish your code in GitHub. It will be taken into account if frequent updates are
+made to the repository that allow analyzing the development process. Ideally, create a
 markdown file for the Readme.md
 
 ## Clarifications
@@ -41,12 +72,12 @@ markdown file for the Readme.md
 
 # Section 2: SQL
 
-You need to explore the data that was inserted in the previous section. The stakeholders ask  
+You need to explore the data that was inserted in the previous section. The stakeholders ask
 for some specific metrics they need. You should create an end-point for each requirement.
 
 ## Requirements
 
-Number of employees hired for each job and department in 2021 divided by quarter. The  
+Number of employees hired for each job and department in 2021 divided by quarter. The
 table must be ordered alphabetically by department and job.
 
 ### Output example:
@@ -57,8 +88,8 @@ table must be ordered alphabetically by department and job.
 | Staff        | Manager   | 2   | 1   | 0   | 2   |
 | Supply Chain | Manager   | 0   | 1   | 3   | 0   |
 
-List of ids, name and number of employees hired of each department that hired more  
-employees than the mean of employees hired in 2021 for all the departments, ordered  
+List of ids, name and number of employees hired of each department that hired more
+employees than the mean of employees hired in 2021 for all the departments, ordered
 by the number of employees hired (descending).
 
 ### Output example:
@@ -72,7 +103,7 @@ by the number of employees hired (descending).
 
 Add the following to your solution to make it more robust:
 
-- Host your architecture in any public cloud (using the services you consider more  
+- Host your architecture in any public cloud (using the services you consider more
   adequate).
 - Add automated tests to the API.
   - You can use whichever library that you want.

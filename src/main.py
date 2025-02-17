@@ -8,8 +8,8 @@ from src.settings import (
     PORT)
 
 
-description = f'''<a href="https://github.com/.../">
-    <img width=10% src="https://raw.githubusercontent.com/.../docs/assets/octocat.gif"/> Follow the repository...</a>'''
+description = f'''<a href="https://github.com/hectorvblend/microservices_lab">
+    <img width=10% src="https://github.com/hectorvblend/microservices_lab/blob/main/docs/assets/octocat.gif"/> Follow the repository...</a>'''
 
 app = FastAPI(
     title="Blend L&L example API service docs page",
