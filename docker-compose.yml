@@ -1,0 +1,60 @@
+version: "3.3"
+
+services:
+
+  db:
+    image: postgres:13.2
+    container_name: blend_example_db
+    restart: always
+    volumes:
+      - ./database:/var/lib/postgresql/data
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+
+  adminer:
+    container_name: adminer
+    image: adminer:4.8.0
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on: ["db"]
+
+  # app:
+  #   # "build" is the place from where it takes the files to generate the image.
+  #   # build: .
+  #   build: .
+  #   # Imágen to use:
+  #   image: blend_example
+  #   # Container name:
+  #   container_name: blend_example
+  #   # Behavior before failures and when starting the system:
+  #   restart: always
+  #   # Linked folders:
+  #   # volumes:
+  #   #   # Source code directory:
+  #   #   - type: bind
+  #   #     source: ./src
+  #   #     target: /app
+  #   # Used ports:
+  #   ports:
+  #     - 8020:8020
+  #   environment:
+  #     on_docker: true
+  #   # Cosole control:
+  #   stdin_open: true
+  #   tty: true
+  #   env_file:
+  #     - .env
+  #   # Command to execute at start:
+  #   command: python main.py
+  #   depends_on: ["db"]
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

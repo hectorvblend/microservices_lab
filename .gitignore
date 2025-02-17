@@ -1,0 +1,16 @@
+# Poetry dist folder
+**/dist/*
+# pycache
+*.pyc
+# __pycache__
+**/__pycache__
+.coverage
+coverage.xml
+junit/
+
+# Logs
+**/*log.*
+
+# database files:
+**/database
+**/.vscode
