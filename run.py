@@ -1,4 +1,3 @@
-import os
 import uvicorn
 from src.main import app
 from src.settings import HOST, PORT, ENVIRONMENT
