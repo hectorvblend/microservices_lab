@@ -16,10 +16,10 @@ Install UV from https://docs.astral.sh/uv/getting-started/installation/
 $ uv venv
 
 # 2. Compile the dependencies using python or python3 command:
-$ python -m uv pip compile requirements.in --output-file requirements.txt
+$ uv pip compile requirements.in --output-file requirements.txt
 
 # 3. Install packages using python or python3 command:
-$ python -m uv pip sync requirements.txt
+$ uv pip sync requirements.txt
 ```
 
 <h2>Creating database</h2>

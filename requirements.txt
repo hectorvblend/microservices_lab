@@ -12,6 +12,8 @@ colorama==0.4.6
     #   pytest
 coverage==7.6.1
     # via pytest-cov
+dill==0.3.9
+    # via -r requirements.in
 fastapi==0.101.0
     # via -r requirements.in
 greenlet==3.1.1

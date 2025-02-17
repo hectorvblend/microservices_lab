@@ -1,10 +1,15 @@
-from fastapi import FastAPI, File, UploadFile
-from src.controllers.api.schemas.application_schemas import (InsertJob, InsertDepartment, InsertHiredEmployees)
+#!/usr/bin/env python3
+'''
+This file includes the API endpoints for the application.
+'''
 from fastapi import APIRouter
 from src.connectors.jobs import Job
+from fastapi import File, UploadFile
 from src.connectors.departments import Department
 from src.connectors.hired_employees import HiredEmployees
 from src.connectors.create_schemas import ALLOWED_ENTITIES
+from src.controllers.api.schemas.application_schemas import (InsertJob, InsertDepartment, InsertHiredEmployees)
+
 router = APIRouter()
 
 @router.post("/import-from-csv/{entity}/", tags=["Import API"])
@@ -155,9 +160,9 @@ async def get_hired_employees_above_average(year: int = 2021):
         {
             "valids": [
                     {
-                      "id": 3,
-                      "department": "Research and Development",
-                      "hired": 177
+                        "id": 3,
+                        "department": "Research and Development",
+                        "hired": 177
                     },
                 ],
             "invalids": []
@@ -165,3 +170,22 @@ async def get_hired_employees_above_average(year: int = 2021):
     '''
     result = await HiredEmployees.get_departments_above_average(year)
     return result
+
+@router.get("/test_ds_model/", tags=["DS APIs"])
+def test_ds_model(number: int = 8):
+    '''
+    <h3>Description:</h3>
+    <h4>Test the DS model with an input number, it will return the result of the model.</h4>
+    <h3>Input value:</h3>
+
+        number: int
+
+    <h3>Output example:</h3>
+
+        {
+            "result": 64
+        }
+    '''
+    from src.main import DS_MODEL
+    result = DS_MODEL(number)
+    return {'result': result}

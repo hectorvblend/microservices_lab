@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+'''
+This file is used to store all the environment variables.
+'''
 import os
 
 if not os.getenv('ENVIRONMENT', False):
@@ -5,7 +9,8 @@ if not os.getenv('ENVIRONMENT', False):
     load_dotenv('./env',)
 
 # Server settings:
-ENVIRONMENT = os.getenv('ENVIRONMENT', 'prod')
+localhost = 'localhost'
+ENVIRONMENT = os.getenv('ENVIRONMENT', localhost)
 HOST = '0.0.0.0'
 PORT = int(os.getenv('PORT', 8010))
 

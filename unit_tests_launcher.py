@@ -4,7 +4,7 @@ This script is used to launch the unit tests.
 There are two ways to run the unit tests:
 1. Run the unit tests from the command line:
 ```
-$ pipenv run python unit_tests_launcher.py
+$ uv run unit_tests_launcher.py
 ```
 2. Run the unit tests from the GitHub action workflow: unitest-workflow.yml
 
