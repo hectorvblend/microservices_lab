@@ -31,4 +31,4 @@ jobs:
         uv pip sync requirements.in
     - name: Test with pytest
       run: |
-        python unit_tests_launcher.py
+        uv run unit_tests_launcher.py
