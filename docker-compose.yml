@@ -1,7 +1,6 @@
 version: "3.3"
 
 services:
-
   db:
     image: postgres:13.2
     container_name: blend_example_db
