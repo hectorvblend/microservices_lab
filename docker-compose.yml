@@ -1,36 +1,44 @@
+# Specify the Docker Compose file version
 version: "3.3"
 
 services:
+  # PostgreSQL database service
   db:
-    image: postgres:13.2
-    container_name: blend_example_db
-    restart: always
+    image: postgres:13.2                      # Use PostgreSQL 13.2 image
+    container_name: blend_example_db          # Name of the container
+    restart: always                           # Automatically restart if it crashes
     volumes:
+      # Persist database data to local ./database directory
       - ./database:/var/lib/postgresql/data
 
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Database configuration using environment variables
+      POSTGRES_DB: ${POSTGRES_DB}             # Database name
+      POSTGRES_USER: ${POSTGRES_USER}         # Database user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Database password
     env_file:
-      - .env
+      - .env                                  # Load environment variables from .env file
     ports:
-      - 5432:5432
+      - 5432:5432                             # Map container's port 5432 to host's port 5432
 
+  # Database management web interface
   adminer:
     container_name: adminer
-    image: adminer:4.8.0
+    image: adminer:4.8.0                      # Use Adminer 4.8.0 image
     restart: always
     ports:
-      - 8080:8080
-    depends_on: ["db"]
+      - 8080:8080                             # Access Adminer through localhost:8080
+    depends_on: ["db"]                        # Ensure db service starts first
 
+  # AI model service using Ollama
   deepseek:
-    image: ollama/ollama
+    image: ollama/ollama                      # Use official Ollama image
     volumes:
+      # Persist model data to local directory
       - ./ollama-models:/root/.ollama
     ports:
-      - 11434:11434
+      - 11434:11434                           # Expose Ollama API port
     entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 2 && ollama pull deepseek-r1:1.5b && tail -f /dev/null"]
     extra_hosts:
+      # Allow container to access host machine services
       - "host.docker.internal:host-gateway"
