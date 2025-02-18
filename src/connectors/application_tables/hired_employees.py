@@ -1,8 +1,8 @@
 import csv
 from sqlalchemy import insert
 from datetime import datetime
-from src.connectors.jobs import Job
-from src.connectors.departments import Department
+from src.connectors.application_tables.jobs import Job
+from src.connectors.application_tables.departments import Department
 from src.connectors.db_connect import ENGINE, BASE, SESSION, excecute
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, extract, asc, func, case, desc
 

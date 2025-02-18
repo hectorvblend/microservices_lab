@@ -1,4 +1,5 @@
 import os
+from time import sleep
 import dill
 import pathlib
 
@@ -23,7 +24,7 @@ async def load_model():
     Returns:
         callable: The deserialized model loaded from the file.
     """
-
+    sleep(10)
     with open(model_file_path, "rb") as f:
         loaded_model = dill.load(f)
     return loaded_model

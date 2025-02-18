@@ -26,35 +26,12 @@ services:
       - 8080:8080
     depends_on: ["db"]
 
-  # app:
-  #   # "build" is the place from where it takes the files to generate the image.
-  #   # build: .
-  #   build: .
-  #   # Imágen to use:
-  #   image: blend_example
-  #   # Container name:
-  #   container_name: blend_example
-  #   # Behavior before failures and when starting the system:
-  #   restart: always
-  #   # Linked folders:
-  #   # volumes:
-  #   #   # Source code directory:
-  #   #   - type: bind
-  #   #     source: ./src
-  #   #     target: /app
-  #   # Used ports:
-  #   ports:
-  #     - 8020:8020
-  #   environment:
-  #     on_docker: true
-  #   # Cosole control:
-  #   stdin_open: true
-  #   tty: true
-  #   env_file:
-  #     - .env
-  #   # Command to execute at start:
-  #   command: python main.py
-  #   depends_on: ["db"]
-
+  deepseek:
+    image: ollama/ollama
+    volumes:
+      - ./ollama-models:/root/.ollama
+    ports:
+      - 11434:11434
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 2 && ollama pull deepseek-r1:1.5b && tail -f /dev/null"]
     extra_hosts:
       - "host.docker.internal:host-gateway"

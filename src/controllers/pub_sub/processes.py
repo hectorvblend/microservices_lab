@@ -1,14 +1,11 @@
-import base64
 import random
 import threading
 from time import sleep
-from datetime import datetime, timezone
-from src.settings import WATCHDOG_MONITOR_INTERVAL_SEC
-from src.controllers.pub_sub.publisher import Publisher
-from src.connector.sql_alchemy.ap.async_process import AsyncProcess
+from datetime import datetime
+from src.services.deepseek.interface import DeepSeek
+from src.connectors.long_process.async_process import AsyncProcess
 
 __LOCK__ = threading.Lock()
-__WATCHDOG_LOCK__ = threading.Lock()
 
 def log_execution(save_to_file=False):
     """
@@ -79,71 +76,33 @@ def locked_callback_example(message):
 
 @log_execution()
 def async_process_core_callback(message):
+    """
+    Executes the core logic of the async process callback.
+
+    This function acquires a lock and checks if the message data exists in the AsyncProcess table.
+    If the record exists, it updates the status to 'successful' and the output field with a success message.
+    It then sleeps for 10 seconds and acknowledges the message.
+
+    Args:
+    -----
+        message (Message): The message to be processed.
+
+    Returns:
+    -------
+        None
+    """
     with __LOCK__:
         data = message.data.decode("utf-8")
         ap = AsyncProcess()
-        job = ap.custom_filter(where_dict={'id': base64.b64decode(data.encode())})
-        if job and isinstance(job[0], dict) and job[0].get('event_type', False):
+        job = ap.custom_filter(where_dict={'id': data.encode()})
+        if job:
             job = job[0]
-            if 'bp' in job['event_type'].lower():
-                s = ScenarioMaster()
-                s.execute_job(id=data)
+            output = DeepSeek().generate(job['input'])
+            ap.update_by_filter(
+                filter_criteria={'id': job['id']},
+                update_values={
+                    'status': ap.__successful__,
+                    'output': output.json(),
+                    }
+                )
         message.ack()
-
-@log_execution()
-def watchdog_monitor():
-    """
-    watchdog_monitor function that starts a watchdog monitor in a separate thread.
-    The watchdog monitor continuously checks for missing jobs in the `ScenarioJobStatus`
-    table and publishes them to a message queue.
-
-    The function creates a nested function `watch()` that runs in a loop. Inside the loop, it performs the following steps:
-    1. Creates an instance of the `ScenarioJobStatus` class.
-    2. Retrieves a list of missing jobs from the `ScenarioJobStatus` table.
-    3. Gets the current timestamp.
-    4. Prints a message indicating the start of the watchdog monitor execution.
-    5. If there are missing jobs, it creates an instance of the `Publisher` class and publishes each missing job's ID to the message queue.
-    6. Updates the status and timestamp of the missing jobs in the `ScenarioJobStatus` table.
-    7. Prints a message indicating the end of the watchdog monitor execution and the number of jobs rescheduled.
-    8. Handles any exceptions that occur during the execution.
-    9. Sleeps for a specified interval before repeating the loop.
-
-    The function then creates a new thread using the `watch()` function as the target and starts the thread.
-    """
-    def watch():
-        """
-        Function to continuously monitor for missing jobs in the ScenarioJobStatus table and publish them to a message queue.
-
-        Returns:
-
-            None
-        """
-        get_timestamp = lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # Use a lock to ensure thread safety:
-        with __WATCHDOG_LOCK__:
-            while True:
-                try:
-                    print(f'T: {get_timestamp()} - watchdog_monitor execution begins')
-                    # Get the current missing jobs:
-                    ap = AsyncProcess()
-                    IDs = ap.get_missing_or_failed_jobs()
-                    # Update the status and timestamp of the missing jobs to put them in the queue:
-                    if IDs:
-                        pb = Publisher()
-                        for ID in IDs:
-                            id = ID['id']
-                            ap.update_by_filter(
-                                filter_criteria={'id':  base64.b64decode(id)},
-                                update_values={
-                                    'status': ap.__pending__,
-                                    'updated_timestamp_utc': datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()
-                                    })
-                            pb.publish_message(message=id.decode())
-                        print(f'T: {get_timestamp()} - watchdog_monitor execution begins')
-                    print(f'T: {get_timestamp()} - watchdog_monitor execution ends, jobs rescheduled: {IDs}')
-                except Exception as e:
-                    print(f'Exception in watchdog_monitor() - {e} - T: {get_timestamp()}')
-                sleep(WATCHDOG_MONITOR_INTERVAL_SEC)
-    # Start the thread using the watch function:
-    thread = threading.Thread(target=watch, name="watchdog_monitor")
-    thread.start()

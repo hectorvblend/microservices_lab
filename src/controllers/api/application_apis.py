@@ -3,10 +3,10 @@
 This file includes the API endpoints for the application.
 '''
 from fastapi import APIRouter
-from src.connectors.jobs import Job
+from src.connectors.application_tables.jobs import Job
 from fastapi import File, UploadFile
-from src.connectors.departments import Department
-from src.connectors.hired_employees import HiredEmployees
+from src.connectors.application_tables.departments import Department
+from src.connectors.application_tables.hired_employees import HiredEmployees
 from src.connectors.create_schemas import ALLOWED_ENTITIES
 from src.controllers.api.schemas.application_schemas import (InsertJob, InsertDepartment, InsertHiredEmployees)
 
